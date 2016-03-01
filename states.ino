@@ -2,17 +2,17 @@ int oldState=0;
 
 
 int setState() {
- if (weight<=(empty+margin)) { // detect empty
+ if (weight<=(empty+emptyMargin)) { // detect empty
     state=0;
  }
  else // not empty 
  {
-   if (weight>=full+margin*1000) {  // overful
+   if (weight>=full+fullMargin*1000) {  // overful
      state=3;
    } 
    else // not overful
    {  
-     if ((weight>=full-margin) & (state==0)) { // detect brewing and reset brewing timer
+     if ((weight>=full-fullMargin) & (state==0)) { // detect brewing and reset brewing timer
         setTimer(brewingTime);
         state=1; 
      }
