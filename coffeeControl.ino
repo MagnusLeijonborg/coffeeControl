@@ -1,39 +1,25 @@
 /*
-  Web client
+ CoffeeControl
 
- This sketch connects to a website (http://www.google.com)
- using an Arduino Wiznet Ethernet shield.
-
- Circuit:
- * Ethernet shield attached to pins 10, 11, 12, 13
-
- created 18 Dec 2009
- by David A. Mellis
- modified 9 Apr 2012
- by Tom Igoe, based on work by Adrian McEwen
-
+ created 15 februari 2016
+ by Magnus Leijonborg
+ 
  */
 
 #include <SPI.h>
 #include <Ethernet.h>
-
 #include <Adafruit_NeoPixel.h>
+#include "HX711.h"
+
 #ifdef __AVR__
   #include <avr/power.h>
 #endif
 
-#include "HX711.h"
+HX711 scale(A0,A1);
 
-// HX711.DOUT	- pin #3
-// HX711.PD_SCK	- pin #4
+#define PIN      A2 //NEO pixel pin
 
- HX711 scale(A0,A1);
-
-// Which pin on the Arduino is connected to the NeoPixels?
-// On a Trinket or Gemma we suggest changing this to 1
-#define PIN            A2
-
-#define tareHigh 6
+#define tareHigh 6  // pins for tare buttons
 #define tareLow  5
 
 
@@ -66,7 +52,9 @@ double scale_g=5.17857;
 int brewingTime=60*5; //brewint time in seconds
 int empty=10350; // empty weight but with margin wet filter
 int full=11000; // weight with water but with margin
-int margin=20;
+int fullMargin=80;
+int emptyMargin=20;
+
 int updateRate=10;
 
 //************* end settings **********************
