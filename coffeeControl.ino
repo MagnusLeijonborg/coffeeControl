@@ -5,11 +5,12 @@
  by Magnus Leijonborg
  
  */
-
+#include <EEPROM.h>
 #include <SPI.h>
 #include <Ethernet.h>
 #include <Adafruit_NeoPixel.h>
 #include "HX711.h"
+
 
 #ifdef __AVR__
   #include <avr/power.h>
@@ -25,6 +26,11 @@ HX711 scale(A0,A1);
 
 // How many NeoPixels are attached to the Arduino?
 #define NUMPIXELS      8
+
+//eeprom adresses to store high ana low weights
+int eeAddressLow = 0;
+int eeAddressHigh = 8;
+
 
 // Enter a MAC address for your controller below.
 // Newer Ethernet shields have a MAC address printed on a sticker on the shield
@@ -52,7 +58,7 @@ double scale_g=5.17857;
 int brewingTime=60*5; //brewint time in seconds
 int empty=10350; // empty weight but with margin wet filter
 int full=11000; // weight with water but with margin
-int fullMargin=80;
+int fullMargin=60;
 int emptyMargin=20;
 
 int updateRate=10;
@@ -81,6 +87,10 @@ void setup() {
    digitalWrite(tareHigh, HIGH);
    pinMode(tareLow, INPUT);
    digitalWrite(tareLow, HIGH);
+   
+   //read high and low from eeprom
+   empty=getInt(eeAddressLow);
+   full=getInt(eeAddressHigh);
 
   // start the Ethernet connection:
   if (Ethernet.begin(mac) == 0) {
@@ -103,9 +113,11 @@ void loop() {
   // check for tare high or Low
   if (digitalRead(tareHigh)==false) {
     full=weight;
+    storeInt(eeAddressHigh,full);
   }
   if (digitalRead(tareLow)==false) {
     empty=weight;
+    storeInt(eeAddressLow,empty);
   }
   
   
